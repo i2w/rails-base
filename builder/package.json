@@ -1,0 +1,18 @@
+{
+  "name": "rails-base-builder",
+  "private": true,
+  "version": "0.1.0",
+  "dependencies": {
+    "@rails/actioncable": "^6.0",
+    "@rails/actiontext": "^6.0",
+    "@rails/activestorage": "^6.0",
+    "@rails/ujs": "^6.0",
+    "@rails/webpacker": "^4.2.2",
+    "stimulus": "^1.1.1",
+    "turbolinks": "^5.2.0"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.11.0"
+  }
+}
+
