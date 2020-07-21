@@ -1,5 +1,8 @@
 # Rails base docker images
 
+My own version of https://github.com/ledermann/docker-rails-base - please
+check that out!
+
 To login to github packages, first create a personal access token which has
 rights to write and read packages.  Copy the access token then
 
