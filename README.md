@@ -25,5 +25,5 @@ Build and tag the docker images
 
 Publish the images
 
-    docker push docker.pkg.github.com/i2w/rails-base/rails-base-builder
-    docker push docker.pkg.github.com/i2w/rails-base/rails-base-final
+    docker push docker.pkg.github.com/i2w/rails-base/rails-base-builder:v1
+    docker push docker.pkg.github.com/i2w/rails-base/rails-base-final:v1
