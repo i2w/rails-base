@@ -3,25 +3,40 @@ LABEL maintainer="ian@i2w.me"
 
 # Add basic packages
 RUN apk add --no-cache \
-      postgresql-client \
-      tzdata \
-      file
+        postgresql-client \
+        nodejs \
+        yarn \
+        tzdata \
+        file
 
-# Configure Rails
-ENV RAILS_ENV development
+ENV RAILS_ENV=development
+ENV RAILS_LOG_TO_STDOUT=true
 
 WORKDIR /app
-
-# Expose Puma port
 EXPOSE 3000
+CMD ["bundle", "exec", "rails", "server", "-p", "3000", "-b", "0.0.0.0"]
 
-# Add user
-ONBUILD RUN addgroup -g 1000 -S app && \
-            adduser -u 1000 -S app -G app
+ONBUILD COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 
-# Install Ruby gems (for development)
-ONBUILD COPY Gemfile* /app/
-ONBUILD RUN bundle config --local without 'test' && \
-            bundle install -j4 --retry 3
+# Install all gems, and cleanup
+ONBUILD COPY Gemfile /app
+ONBUILD COPY Gemfile.lock /app
+ONBUILD RUN bundle install -j4 --retry 3 && \
+            rm -rf /usr/local/bundle/cache/*.gem && \
+            find /usr/local/bundle/gems/ -name "*.c" -delete && \
+            find /usr/local/bundle/gems/ -name "*.o" -delete
 
-ONBUILD COPY --from=Builder --chown=app:app /app /app
+# Install assets
+# Notes: For an app using encrypted credentials, Rails raises a `MissingKeyError`
+#        if the master key is missing. Because on CI there is no master key,
+#        we hide the credentials while compiling assets.
+ONBUILD COPY package.json yarn.lock* /app/
+ONBUILD RUN mv config/credentials.yml.enc config/credentials.yml.enc.bak 2>/dev/null || true
+ONBUILD RUN bundle exec rails assets:precompile SECRET_KEY_BASE=X RAILS_MASTER_KEY=X
+ONBUILD RUN mv config/credentials.yml.enc.bak config/credentials.yml.enc 2>/dev/null || true
+
+ONBUILD COPY --from=builder /app /app
+
+# Copy the whole application folder into the image
+ONBUILD COPY . /app
+

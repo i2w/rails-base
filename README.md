@@ -11,7 +11,7 @@ rights to write and read packages.  Copy the access token then
 Prepare the builder docker image if dependencies have changed
 
     cd builder
-    yarn install
+    yarn install --check-files
     bundle install
     cd ..
 
@@ -21,13 +21,19 @@ with the version (v1, etc) and use that in the following commands instead of v1
 Build and tag the docker images
 
     docker build -t docker.pkg.github.com/i2w/rails-base/rails-base-builder:v1 builder
-    docker build -t docker.pkg.github.com/i2w/rails-base/rails-base-test:v1 test
     docker build -t docker.pkg.github.com/i2w/rails-base/rails-base-development:v1 development
     docker build -t docker.pkg.github.com/i2w/rails-base/rails-base-production:v1 production
 
 Publish the images
 
     docker push docker.pkg.github.com/i2w/rails-base/rails-base-builder:v1
-    docker push docker.pkg.github.com/i2w/rails-base/rails-base-test:v1
     docker push docker.pkg.github.com/i2w/rails-base/rails-base-development:v1
     docker push docker.pkg.github.com/i2w/rails-base/rails-base-production:v1
+
+## Usage
+
+Here is an example Dockerfile that uses these base images
+
+    FROM docker.pkg.github.com/i2w/rails-base/rails-base-builder:v1 AS builder
+    FROM docker.pkg.github.com/i2w/rails-base/rails-base-development:v1 AS development
+    FROM docker.pkg.github.com/i2w/rails-base/rails-base-production:v1 AS production
