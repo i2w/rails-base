@@ -4,9 +4,9 @@ My own version of https://github.com/ledermann/docker-rails-base - please
 check that out!
 
 I'm using convox for orchestration, which automatically picks up on an intermediate
-image called 'development'
+image called 'development'.
 
-## Enable pushing docker images to github
+## Enable pushing docker images to github
 
 To login to github packages, first create a personal access token which has
 rights to write and read packages.  Copy the access token then
