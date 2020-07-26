@@ -15,6 +15,8 @@ rights to write and read packages.  Copy the access token then
 
 ## Building, tagging and psuhing the images
 
+TODO: this can be automated
+
 ### Prepare the builder image when dependencies has been changed
 
 Prepare the builder docker image if dependencies have changed
