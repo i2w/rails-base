@@ -21,7 +21,7 @@ RUN yarn install --check-files
 # Install standard gems
 COPY Gemfile* /app/
 RUN gem update bundler && \
-    bundle config --local build.sassc --disable-march-tune-native && \
+    bundle config build.sassc --disable-march-tune-native && \
     bundle install -j4 --retry 3
 
 # ONBUILD triggers - when an image is built from this image 

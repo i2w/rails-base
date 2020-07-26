@@ -21,13 +21,11 @@ ONBUILD ARG COMMIT_TIME
 ONBUILD ENV COMMIT_SHA ${COMMIT_SHA}
 ONBUILD ENV COMMIT_TIME ${COMMIT_TIME}
 
-# Add user
-ONBUILD RUN addgroup -g 1000 -S app && adduser -u 1000 -S app -G app
-ONBUILD USER app
-
-# Copy gems from builder stage, remove unneeded ones
-ONBUILD COPY --from=builder --chown=app:app /usr/local/bundle/ /usr/local/bundle/
-ONBUILD RUN bundle install --without "test development" && bundle clean --force
+# Copy gems from builder stage, install only production, remove unneeded
+ONBUILD COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+ONBUILD RUN bundle config set without 'test development' && \
+            bundle install -j4 --retry 3 && \
+	    bundle clean --force
 
 # Copy app from builder stage
-ONBUILD COPY --from=builder --chown=app:app /app /app
+ONBUILD COPY --from=builder /app /app
