@@ -13,7 +13,7 @@ rights to write and read packages.  Copy the access token then
 
     docker login https://docker.pkg.github.com -u ianwhite
 
-## Building, tagging and psuhing the images
+## Building, tagging and pushing the images
 
 TODO: this can be automated
 
