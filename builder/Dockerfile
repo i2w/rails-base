@@ -5,10 +5,11 @@ LABEL maintainer="ian@i2w.me"
 RUN apk add --no-cache \
         build-base \
         cmake \
-	vips \
         postgresql-dev \
         git \
         nodejs \
+	chromium-chromedriver \
+	chromium \
         yarn \
         tzdata \
         file
@@ -25,6 +26,10 @@ RUN gem update bundler && \
     bundle config build.sassc --disable-march-tune-native && \
     bundle install -j4 --retry 3
 
+# Install Apkfile packages
+ONBUILD COPY Apkfile* /tmp/Apkfile
+ONBUILD RUN apk add --no-cache $(cat /tmp/Aptfile | xargs)
+
 # Install app gems, and cleanup
 ONBUILD COPY Gemfile* /app/
 ONBUILD RUN bundle install -j4 --retry 3 && \
@@ -32,6 +37,10 @@ ONBUILD RUN bundle install -j4 --retry 3 && \
             rm -rf /usr/local/bundle/cache/*.gem && \
             find /usr/local/bundle/gems/ -name "*.c" -delete && \
             find /usr/local/bundle/gems/ -name "*.o" -delete
+
+# Install app js dependencies via yarn
+ONBUILD COPY yarn.lock package.json /app/
+ONBUILD RUN yarn install --check-files
 
 # Copy the whole application folder into the image
 ONBUILD COPY . /app

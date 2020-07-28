@@ -13,7 +13,6 @@ RUN apk add --no-cache \
         file
 
 # Configure rails and entry point 
-ENV RAILS_ENV=development
 ENV RAILS_LOG_TO_STDOUT=true
 WORKDIR /app
 EXPOSE 3000

@@ -39,9 +39,9 @@ group :test do
   gem 'capybara'
   gem 'rspec-its'
   gem 'rspec-rails'
+  gem 'selenium-webdriver'
   gem 'simplecov'
   gem 'simplecov-lcov'
-  gem 'webdrivers'
 end
 
 group :code_quality do

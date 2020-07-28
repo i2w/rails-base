@@ -23,7 +23,7 @@ Prepare the builder docker image if dependencies have changed
 
     cd builder
     yarn install --check-files
-    bundle install
+    bundle update
     cd ..
 
 If dependencies have changed, or the Dockerfiles have changed, tag the commit
@@ -32,19 +32,33 @@ with the version (v1, etc) and use that in the following commands instead of v1
 ### Build and tag the docker images
 
     docker build -t docker.pkg.github.com/i2w/rails-base/rails-base-builder:v1 builder
-    docker build -t docker.pkg.github.com/i2w/rails-base/rails-base-development:v1 development
     docker build -t docker.pkg.github.com/i2w/rails-base/rails-base-production:v1 production
 
 ### Publish the images
 
     docker push docker.pkg.github.com/i2w/rails-base/rails-base-builder:v1
-    docker push docker.pkg.github.com/i2w/rails-base/rails-base-development:v1
     docker push docker.pkg.github.com/i2w/rails-base/rails-base-production:v1
 
 ## Using the images
 
-Here is an example Dockerfile that uses these base images
+The images are alert to an `Apkfile` which can contain a list of apk packages to 
+be installed on both the builder and production images.
+
+Here is an example that uses these base images (convox example)
+
+#### Apkfile
+
+    vips
+
+#### Dockerfile
 
     FROM docker.pkg.github.com/i2w/rails-base/rails-base-builder:v1 AS builder
-    FROM docker.pkg.github.com/i2w/rails-base/rails-base-development:v1 AS development
+
+    FROM builder AS development
+    # for convox code sync
+    COPY . /app
+    CMD ["bin/rails", "server", "-b", "0.0.0.0"]
+
+    # production build
     FROM docker.pkg.github.com/i2w/rails-base/rails-base-production:v1 AS production
+    CMD ["bin/rails", "server", "-b", "0.0.0.0"]
