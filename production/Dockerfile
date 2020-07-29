@@ -22,8 +22,9 @@ ONBUILD ENV COMMIT_SHA ${COMMIT_SHA}
 ONBUILD ENV COMMIT_TIME ${COMMIT_TIME}
 
 # Install Apkfile packages
-ONBUILD COPY Apkfile* /tmp/Apkfile
-ONBUILD RUN apk add --no-cache $(cat /tmp/Aptfile | xargs)
+ONBUILD RUN touch /tmp/Apkfile
+ONBUILD COPY Apkfile* /tmp
+ONBUILD RUN apk add --no-cache $(cat /tmp/Apkfile | xargs)
 
 # Copy gems from builder stage, install only production, remove the rest
 ONBUILD COPY --from=builder /usr/local/bundle/ /usr/local/bundle/

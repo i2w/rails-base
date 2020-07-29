@@ -27,8 +27,9 @@ RUN gem update bundler && \
     bundle install -j4 --retry 3
 
 # Install Apkfile packages
-ONBUILD COPY Apkfile* /tmp/Apkfile
-ONBUILD RUN apk add --no-cache $(cat /tmp/Aptfile | xargs)
+ONBUILD RUN touch /tmp/Apkfile
+ONBUILD COPY Apkfile* /tmp
+ONBUILD RUN apk add --no-cache $(cat /tmp/Apkfile | xargs)
 
 # Install app gems, and cleanup
 ONBUILD COPY Gemfile* /app/
