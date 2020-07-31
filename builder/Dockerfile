@@ -5,6 +5,7 @@ LABEL maintainer="ian@i2w.me"
 RUN apk add --no-cache \
         build-base \
         cmake \
+	postgresql-client \
         postgresql-dev \
         git \
         nodejs \
