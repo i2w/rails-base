@@ -1,19 +1,27 @@
 FROM ruby:2.6.6-alpine
 LABEL maintainer="ian@i2w.me"
 
-# Add basic packages
-RUN apk add --no-cache \
-        build-base \
-        cmake \
-	postgresql-client \
-        postgresql-dev \
-        git \
-        nodejs \
-	chromium-chromedriver \
-	chromium \
-        yarn \
-        tzdata \
-        file
+ENV APK_LIST build-base \
+             chromium \
+             chromium-chromedriver \
+             cmake \
+             file \
+             git \
+             musl-locales \
+             nodejs \
+             postgresql-client \
+             postgresql-dev \
+             tzdata \
+             yarn 
+
+# Install edge repositories and our APK_LIST, cleanup 
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.11/main" >> /etc/apk/repositories && \
+    apk upgrade -U -a && \
+    apk add --no-cache $APK_LIST && \
+    rm -rf /var/cache/* && mkdir /var/cache/apk
 
 WORKDIR /app
 
@@ -30,12 +38,13 @@ RUN gem update bundler && \
 # Install Apkfile packages
 ONBUILD RUN touch /tmp/Apkfile
 ONBUILD COPY Apkfile* /tmp
-ONBUILD RUN apk add --no-cache $(cat /tmp/Apkfile | xargs)
+ONBUILD RUN apk add --no-cache $(cat /tmp/Apkfile | xargs) && \
+            rm -rf /var/cache/* && mkdir /var/cache/apk
 
 # Install app gems, and cleanup
 ONBUILD COPY Gemfile* /app/
 ONBUILD RUN bundle install -j4 --retry 3 && \
-	    bundle clean --force && \
+	          bundle clean --force && \
             rm -rf /usr/local/bundle/cache/*.gem && \
             find /usr/local/bundle/gems/ -name "*.c" -delete && \
             find /usr/local/bundle/gems/ -name "*.o" -delete
@@ -49,8 +58,5 @@ ONBUILD COPY . /app
 
 # Install app assets modules. Note: we hide credentials while compiling
 ONBUILD RUN mv config/credentials.yml.enc config/credentials.yml.enc.bak 2>/dev/null || true
-ONBUILD RUN RAILS_ENV=production SECRET_KEY_BASE=X RAILS_MASTER_KEY=X \
-            bundle exec rails assets:precompile
+ONBUILD RUN RAILS_ENV=production SECRET_KEY_BASE=X RAILS_PRODUCTION_KEY=X bundle exec rails assets:precompile
 ONBUILD RUN mv config/credentials.yml.enc.bak config/credentials.yml.enc 2>/dev/null || true
-
-

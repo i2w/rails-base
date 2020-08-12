@@ -14,6 +14,9 @@ The production image is a stripped down version of the above.
 Both images are sensitive to an `Apkfile` in which you can list extra alpine packages
 that must be installed in both images.
 
+The builder image is sensitive to an `Apklocales` file, in which you can specify which
+locales should be included. 
+
 ## Using the images
 
 The images are alert to an `Apkfile` which can contain a list of apk packages to 
@@ -26,12 +29,19 @@ dependency on 'vips' for image processing.
 
     vips
 
+#### `./Apklocales
+  
+    en_BG
+    en_US
+    en_AU
+
 #### `./Dockerfile`
 
     # the builder image build app gems and assets via ONBUILD triggers
     # it must be named 'builder', as the production image references this in
     # its build triggers.  It also installs packages listed in the Apkfile
     FROM docker.pkg.github.com/i2w/rails-base/rails-base-builder:v1 AS builder
+    ENV LANG=en_GB.UTF-8 LANGUAGE=en_GB.UTF-8
 
     # convox automatically uses the image called 'development' in local dev mode
     FROM builder AS development
