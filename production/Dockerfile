@@ -33,12 +33,11 @@ ONBUILD RUN touch /tmp/Apkfile
 ONBUILD COPY Apkfile* /tmp
 ONBUILD RUN apk add --no-cache $(cat /tmp/Apkfile | xargs)
 
-# Copy gems from builder stage, install only production, remove the rest
+# Copy gems from builder stage, set without test and development, remove the rest
 ONBUILD COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 ONBUILD COPY Gemfile* /app/
 ONBUILD RUN bundle config set without 'test development' && \
-            bundle install -j4 --retry 3 && \
-	          bundle clean --force
+            bundle clean --force
 
 # Copy app from builder stage
 ONBUILD COPY --from=builder /app /app
