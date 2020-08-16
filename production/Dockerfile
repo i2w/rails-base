@@ -6,7 +6,7 @@ ENV APK_LIST file \
              postgresql-client \
              tzdata
 
-# Install edge repositories and our APK_LIST, cleanup 
+# Install edge repositories and our APK_LIST, cleanup
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
     echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
@@ -29,9 +29,9 @@ ONBUILD ENV COMMIT_SHA ${COMMIT_SHA}
 ONBUILD ENV COMMIT_TIME ${COMMIT_TIME}
 
 # Install Apkfile packages
-ONBUILD RUN touch /tmp/Apkfile
-ONBUILD COPY Apkfile* /tmp
-ONBUILD RUN apk add --no-cache $(cat /tmp/Apkfile | xargs)
+ONBUILD COPY --from=builder /app/Apkfile /app/
+ONBUILD RUN apk add $(cat /app/Apkfile | xargs) && \
+            rm -rf /var/cache/* && mkdir /var/cache/apk
 
 # Copy gems from builder stage, set without test and development, remove the rest
 ONBUILD COPY --from=builder /usr/local/bundle/ /usr/local/bundle/

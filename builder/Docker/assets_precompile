@@ -1,9 +1,0 @@
-#!/bin/sh
-
-set -ex
-
-cd /app
-mv config/credentials.yml.enc config/credentials.yml.enc.bak 2>/dev/null || true
-RAILS_ENV=production SECRET_KEY_BASE=X RAILS_PRODUCTION_KEY=X bundle exec rails assets:precompile
-mv config/credentials.yml.enc.bak config/credentials.yml.enc 2>/dev/null || true
-
