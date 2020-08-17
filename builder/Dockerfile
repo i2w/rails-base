@@ -44,26 +44,32 @@ ONBUILD COPY Apkfile* /app/
 ONBUILD RUN apk add $(cat /app/Apkfile* | xargs) && \
             rm -rf /var/cache/* && mkdir /var/cache/apk
 
-# Install gem bundle 
+# bundle
+# bundle.1: copy Gemfile
 ONBUILD COPY Gemfile* /app/
+# bundle.2: install gems
 ONBUILD RUN bundle install -j4 --retry 3 &&\
             bundle clean --force && \
             rm -rf /usr/local/bundle/cache/*.gem && \
             find /usr/local/bundle/gems/ -name "*.c" -delete && \
             find /usr/local/bundle/gems/ -name "*.o" -delete
 
-# Copy files that affect assets, then precompile assets
-ONBUILD RUN $(cd /app; mkdir -p app/javascript app/assets config bin public vendor/assets)
-ONBUILD COPY package.json yarn.lock *.config.js Rakefile /app/
-ONBUILD COPY app/javascript               /app/app/javascript
-ONBUILD COPY app/assets                   /app/app/assets
-ONBUILD COPY bin                          /app/bin/
-ONBUILD COPY config                       /app/config/
-ONBUILD COPY public                       /app/public/
-ONBUILD COPY vendor/.keep vendor/assets*  /app/vendor/assets
-ONBUILD RUN mv config/credentials.yml.enc config/credentials.yml.enc.bak 2>/dev/null || true
-ONBUILD RUN RAILS_ENV=production SECRET_KEY_BASE=X RAILS_PRODUCTION_KEY=X bundle exec rails assets:precompile
-ONBUILD RUN mv config/credentials.yml.enc.bak config/credentials.yml.enc 2>/dev/null || true
+# assets
+# assets.1: mk directories required for assets
+ONBUILD RUN mkdir -p /app/bin /app/app/javascript /app/app/assets \
+                     /app/config/webpack /app/config/environments /app/config/initializers
+# assets.2: copy whole directories
+ONBUILD COPY bin                  /app/bin
+ONBUILD COPY app/assets           /app/app/assets
+ONBUILD COPY app/javascript       /app/app/javascript
+ONBUILD COPY config/webpack       /app/config/webpack
+ONBUILD COPY config/environments  /app/config/environments
+# assets.3: copy single files required into place
+ONBUILD COPY Rakefile package.json yarn.* *.config.js .browsers*     /app/
+ONBUILD COPY config/web*.yml config/app* config/env*.rb config/boot* /app/config/
+ONBUILD COPY config/initializers/assets*.rb                          /app/config/initializers/
+# assets.4: precompile assets
+ONBUILD RUN RAILS_ENV=production SECRET_KEY_BASE=X bundle exec rails assets:precompile
 
 # Copy the rest of the application into the image
 ONBUILD COPY . /app/

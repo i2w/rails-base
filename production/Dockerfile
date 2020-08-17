@@ -29,7 +29,7 @@ ONBUILD ENV COMMIT_SHA ${COMMIT_SHA}
 ONBUILD ENV COMMIT_TIME ${COMMIT_TIME}
 
 # Install Apkfile packages
-ONBUILD COPY --from=builder /app/Apkfile /app/
+ONBUILD COPY Apkfile /app/Apkfile
 ONBUILD RUN apk add $(cat /app/Apkfile | xargs) && \
             rm -rf /var/cache/* && mkdir /var/cache/apk
 
