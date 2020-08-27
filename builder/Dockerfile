@@ -1,6 +1,13 @@
-# syntax = docker/dockerfile:1.0-experimental
-FROM ruby:2.6.6-alpine
+ARG RUBY_VERSION
+ARG RAILS_VERSION
+ARG DEPS_VERSION
+
+FROM i2wdev/ruby-base:$RUBY_VERSION
+
 LABEL maintainer="ian@i2w.me"
+LABEL RUBY_VERSION=$RUBY_VERSION
+LABEL RAILS_VERSION=$RAILS_VERSION
+LABEL DEPS_VERSION=$DEPS_VERSION
 
 ENV APK_LIST build-base \
              chromium \
@@ -15,12 +22,8 @@ ENV APK_LIST build-base \
              tzdata \
              yarn 
 
-# Install edge repositories and our APK_LIST, cleanup
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/v3.11/main" >> /etc/apk/repositories && \
-    apk upgrade -U -a && \
+# Install our APK_LIST, cleanup
+RUN apk upgrade -U -a && \
     apk add --no-cache $APK_LIST && \
     rm -rf /var/cache/* && mkdir /var/cache/apk
 
@@ -73,3 +76,4 @@ ONBUILD RUN RAILS_ENV=production SECRET_KEY_BASE=X bundle exec rails assets:prec
 
 # Copy the rest of the application into the image
 ONBUILD COPY . /app/
+

@@ -1,5 +1,13 @@
-FROM ruby:2.6.6-alpine
+ARG RUBY_VERSION
+ARG RAILS_VERSION
+ARG DEPS_VERSION
+
+FROM i2wdev/ruby-base:$RUBY_VERSION
+
 LABEL maintainer="ian@i2w.me"
+LABEL RUBY_VERSION=$RUBY_VERSION
+LABEL RAILS_VERSION=$RAILS_VERSION
+LABEL DEPS_VERSION=$DEPS_VERSION
 
 ENV APK_LIST file \
              musl-locales \
@@ -7,11 +15,7 @@ ENV APK_LIST file \
              tzdata
 
 # Install edge repositories and our APK_LIST, cleanup
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/v3.11/main" >> /etc/apk/repositories && \
-    apk upgrade -U -a && \
+RUN apk upgrade -U -a && \
     apk add --no-cache $APK_LIST && \
     rm -rf /var/cache/* && mkdir /var/cache/apk
 
@@ -21,12 +25,6 @@ ENV RAILS_LOG_TO_STDOUT true
 ENV RAILS_SERVE_STATIC_FILES true
 WORKDIR /app
 EXPOSE 3000
-
-# Write GIT commit SHA and TIME to env vars
-ONBUILD ARG COMMIT_SHA
-ONBUILD ARG COMMIT_TIME
-ONBUILD ENV COMMIT_SHA ${COMMIT_SHA}
-ONBUILD ENV COMMIT_TIME ${COMMIT_TIME}
 
 # Install Apkfile packages
 ONBUILD COPY Apkfile /app/Apkfile
