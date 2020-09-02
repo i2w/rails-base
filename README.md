@@ -42,7 +42,7 @@ dependency on 'vips' for image processing.
 
     # production build installs minimal packages, plus those listed in Apkfile
     # it copies 'builder' app code and gems, and removes all non-production data 
-    FROM i2wdev/rails-base-builder:ruby2.7.1-rails6.0.3.2-v1 
+    FROM i2wdev/rails-base-production:ruby2.7.1-rails6.0.3.2-v1 
     CMD ["Docker/server"]
 
 ## Updating the images (notes to maintanter)
