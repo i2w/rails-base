@@ -16,15 +16,15 @@ docker build -t i2wdev/rails-base-builder:${TAG} \
              --build-arg DEPS_VERSION=${DEPS_VERSION} \
              builder
 
-docker push i2wdev/rails-base-builder:r${RUBY_VERSION}-on-r${RAILS_VERSION}-${DEPS_VERSION}
+docker push i2wdev/rails-base-builder:${TAG}
 
 echo "build and push rails-base-production ${TAG}"
 
-docker build -t i2wdev/rails-base-production::${TAG} \
+docker build -t i2wdev/rails-base-production:${TAG} \
              --build-arg RUBY_VERSION=${RUBY_VERSION} \
              --build-arg RAILS_VERSION=${RAILS_VERSION} \
              --build-arg DEPS_VERSION=${DEPS_VERSION} \
              production
 
-docker push i2wdev/rails-base-production:r${RUBY_VERSION}-on-r${RAILS_VERSION}-${DEPS_VERSION}
+docker push i2wdev/rails-base-production:${TAG}
 

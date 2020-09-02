@@ -1,13 +1,7 @@
 ARG RUBY_VERSION
-ARG RAILS_VERSION
-ARG DEPS_VERSION
-
 FROM i2wdev/ruby-base:$RUBY_VERSION
-
-LABEL maintainer="ian@i2w.me"
-LABEL RUBY_VERSION=$RUBY_VERSION
-LABEL RAILS_VERSION=$RAILS_VERSION
 LABEL DEPS_VERSION=$DEPS_VERSION
+LABEL maintainer="ian@i2w.me"
 
 ENV APK_LIST build-base \
              chromium \
@@ -29,9 +23,15 @@ RUN apk upgrade -U -a && \
 
 WORKDIR /app
 
+ARG DEPS_VERSION
+LABEL DEPS_VERSION=$DEPS_VERSION
+
 # Install standard Node modules
 COPY package.json* yarn.lock* /app/
 RUN yarn install --check-files
+
+ARG RAILS_VERSION
+LABEL RAILS_VERSION=$RAILS_VERSION
 
 # Install standard gems
 COPY Gemfile* /app/
