@@ -31,7 +31,7 @@ dependency on 'vips' for image processing.
     # the builder image build app gems and assets via ONBUILD triggers
     # it must be named 'builder', as the production image references this in
     # its build triggers.  It also installs packages listed in the Apkfile
-    FROM i2wdev/rails-base-builder:ruby2.7.1-rails6.0.3.2-v1 AS builder
+    FROM i2wdev/rails-base-builder:ruby2.7.1-rails6.0.3.3-v1 AS builder
     ENV LANG=en_GB.UTF-8 LANGUAGE=en_GB.UTF-8
 
     # convox automatically uses the image called 'development' in local dev mode
@@ -42,7 +42,7 @@ dependency on 'vips' for image processing.
 
     # production build installs minimal packages, plus those listed in Apkfile
     # it copies 'builder' app code and gems, and removes all non-production data 
-    FROM i2wdev/rails-base-production:ruby2.7.1-rails6.0.3.2-v1 
+    FROM i2wdev/rails-base-production:ruby2.7.1-rails6.0.3.3-v1 
     CMD ["Docker/server"]
 
 ## Updating the images (notes to maintanter)
