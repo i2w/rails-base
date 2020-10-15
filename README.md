@@ -3,16 +3,10 @@
 My own version of https://github.com/ledermann/docker-rails-base - please
 check that out!
 
-I'm using convox for orchestration, which automatically picks up on an intermediate
-image called 'development'.
-
-The builder/development image contains everything necessary to install gems, node,
+The builder image contains everything necessary to install gems, node,
 and run browser based tests via chromium.
 
 The production image is a stripped down version of the above.
-
-Both images are sensitive to an `Apkfile` in which you can list extra alpine packages
-that must be installed in both images.
 
 ## Using the images
 
@@ -31,7 +25,7 @@ dependency on 'vips' for image processing.
     # the builder image build app gems and assets via ONBUILD triggers
     # it must be named 'builder', as the production image references this in
     # its build triggers.  It also installs packages listed in the Apkfile
-    FROM i2wdev/rails-base-builder:ruby2.7.1-rails6.0.3.3-v1 AS builder
+    FROM i2wdev/rails-base-builder:ruby2.7.2-rails6.0.3.4-v1 AS builder
     ENV LANG=en_GB.UTF-8 LANGUAGE=en_GB.UTF-8
 
     # convox automatically uses the image called 'development' in local dev mode
@@ -42,7 +36,7 @@ dependency on 'vips' for image processing.
 
     # production build installs minimal packages, plus those listed in Apkfile
     # it copies 'builder' app code and gems, and removes all non-production data 
-    FROM i2wdev/rails-base-production:ruby2.7.1-rails6.0.3.3-v1 
+    FROM i2wdev/rails-base-production:ruby2.7.2-rails6.0.3.4-v1 
     CMD ["Docker/server"]
 
 ## Updating the images (notes to maintanter)
