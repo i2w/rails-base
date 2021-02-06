@@ -1,10 +1,12 @@
 ARG RUBY_VERSION
-FROM i2wdev/ruby-base:$RUBY_VERSION
+# FROM i2wdev/ruby-base:$RUBY_VERSION
+FROM ruby:${RUBY_VERSION}-alpine3.13
 
 LABEL maintainer="ian@i2w.me"
 LABEL RUBY_VERSION=$RUBY_VERSION
 
 ENV APK_LIST file \
+             libxml2 \
              musl-locales \
              postgresql-client \
              tzdata

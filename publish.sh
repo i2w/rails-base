@@ -3,7 +3,7 @@
 set -e
 
 RUBY_VERSION=$(cat builder/.ruby-version)
-RAILS_VERSION=$(cat builder/Gemfile.lock | grep "\srails (" | cut -d "(" -f2 | cut -d ")" -f1)
+RAILS_VERSION=$(cat builder/RAILS_VERSION)
 DEPS_VERSION=$(cat builder/VERSION)
 
 TAG="ruby${RUBY_VERSION}-rails${RAILS_VERSION}-${DEPS_VERSION}"

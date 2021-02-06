@@ -13,7 +13,7 @@ gem 'image_processing'
 gem 'liquid'
 gem 'pg'
 gem 'puma'
-gem 'rails'
+gem 'rails', File.read('./RAILS_VERSION').chomp
 gem 'redis'
 gem 'sassc-rails'
 gem 'sidekiq'

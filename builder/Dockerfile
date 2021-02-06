@@ -1,5 +1,6 @@
 ARG RUBY_VERSION
-FROM i2wdev/ruby-base:$RUBY_VERSION
+# FROM i2wdev/ruby-base:$RUBY_VERSION
+FROM ruby:${RUBY_VERSION}-alpine3.13
 LABEL DEPS_VERSION=$DEPS_VERSION
 LABEL maintainer="ian@i2w.me"
 
@@ -9,6 +10,7 @@ ENV APK_LIST build-base \
              cmake \
              file \
              git \
+             libxml2-dev \
              musl-locales \
              nodejs \
              postgresql-client \
@@ -34,7 +36,7 @@ ARG RAILS_VERSION
 LABEL RAILS_VERSION=$RAILS_VERSION
 
 # Install standard gems
-COPY Gemfile* /app/
+COPY Gemfile* RAILS_VERSION /app/
 RUN gem update bundler && \
     bundle config build.sassc --disable-march-tune-native && \
     bundle install -j4 --retry 3
